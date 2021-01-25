@@ -17,7 +17,9 @@
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
 function isAllTrue(array, fn) {
-  if (!Array.isArray(array) || !array.length) throw 'empty array';
+  if (array.constructor !== Array || !array.length) throw 'empty array';
+
+  if (typeof fn !== 'function') throw 'fn is not a function';
 
   for (let i = 0; i < array.length; i++) {
     if (fn(array[i]) === false) return false;
