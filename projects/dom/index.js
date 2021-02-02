@@ -79,8 +79,8 @@ function findAllPSiblings(where) {
 function findError(where) {
     const result = [];
 
-    for (const child of where.childNodes) {
-        if (child.tagName)
+    for (const child of where.children) {
+        if (child.nodeType === 1)
             result.push(child.textContent);
     }
 
