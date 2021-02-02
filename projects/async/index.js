@@ -31,6 +31,8 @@
  */
 
 import './towns.html';
+import './functions';
+import { loadAndSortTowns } from './functions';
 
 const homeworkContainer = document.querySelector('#app');
 let towns
@@ -42,18 +44,7 @@ let towns
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-    const url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-
-    return fetch(url).
-    then(data => data.json()).
-    then(json => {
-        json.sort((a, b) => {
-            const first = a.name.toLowerCase(),
-                second = b.name.toLowerCase();
-            return first < second ? -1 : 1;
-        })
-        return json;
-    })
+    return loadAndSortTowns()
 }
 
 const getData = async() => {
@@ -65,7 +56,7 @@ const getData = async() => {
     await loadTowns().then(data => {
         loadingBlock.style.display = 'none'
         filterInput.style.display = 'block'
-        towns = data
+        towns = data;
     }).catch(() => {
         loadingBlock.style.display = 'none'
         loadingFailedBlock.style.display = 'block'
