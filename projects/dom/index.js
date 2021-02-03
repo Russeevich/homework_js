@@ -80,8 +80,7 @@ function findError(where) {
     const result = [];
 
     for (const child of where.children) {
-        if (child.nodeType === 1)
-            result.push(child.textContent);
+        result.push(child.textContent);
     }
 
     return result;
