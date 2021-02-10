@@ -35,7 +35,7 @@ function init() {
                     item.properties.iconContent ?
                     item.properties.iconContent + 1 :
                     1
-
+                objectManager.objects.balloon.close(item.id)
             }
         }
     }
@@ -67,7 +67,7 @@ function init() {
                 coordinates: coords
             },
             properties: {
-                balloonContentBody: `<form id='${id}'><p><input placeholder='Введите ваше имя' name='login'></p><p><input name='place' placeholder='Укажите место'></p><p><textarea name='subject' placeholder='Оставьте отзыв'></textarea></p><p><input type='submit' value='Добавить'></p>`,
+                balloonContentBody: `<form id='${id}'><p><input required placeholder='Введите ваше имя' name='login'></p><p><input name='place' required placeholder='Укажите место'></p><p><textarea name='subject' required placeholder='Оставьте отзыв'></textarea></p><p><input type='submit' value='Добавить'></p>`,
                 balloonContentFooter: `</form>`,
                 balloonContentHeader: '<strong>Отзыв:</strong>',
                 clusterCaption: "<strong><s>Еще</s> одна</strong> метка",
