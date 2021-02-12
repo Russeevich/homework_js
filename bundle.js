@@ -8,7 +8,6 @@ function init() {
 
     ]
 
-
     document.addEventListener('submit', e => {
         e.preventDefault()
 
@@ -94,8 +93,6 @@ function init() {
             })
         points.push(obj)
 
-        console.log(clusterer.getGeoObjects())
-
         updateMap(obj)
     }
 
@@ -120,32 +117,6 @@ function init() {
 
     })
 
-
-    // objectManager.objects.events.add('balloonopen', function(e) {
-    //     console.log(points)
-    // });
-
-    // objectManager.objects.events.add('balloonclose', function(e) {
-    //     const objectId = e.get('objectId'),
-    //         obj = points.features.filter(item => item.id === objectId)
-
-    //     obj.forEach(item => {
-    //         if (item.properties.iconContent < 1) {
-    //             points.features = points.features.filter(item => item.id !== objectId)
-    //             objectManager.remove([objectId])
-    //         }
-    //     })
-
-    // })
-
-    // objectManager.objects.options.set('preset', 'islands#blueIcon');
-    // objectManager.clusters.options.set({
-    //     'preset': 'islands#blueClusterIcons',
-    //     gridSize: 100,
-    //     minClusterSize: 1,
-    //     synchAdd: true
-    // });
-    // myMap.geoObjects.add(objectManager);
     myMap.geoObjects.add(clusterer)
 
 }
