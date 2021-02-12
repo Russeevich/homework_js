@@ -47,6 +47,12 @@ function init() {
         '</div>'
     ].join(''));
 
+    var BalloonContentLayout = ymaps.templateLayoutFactory.createClass([
+        '<div class=list>',
+        `<div>{{ properties.balloonContentHeader|raw }}<form id='{{properties.placemarkId}}'><p><input required placeholder='Введите ваше имя' name='login'></p><p><input name='place' required placeholder='Укажите место'></p><p><textarea name='subject' required placeholder='Оставьте отзыв'></textarea></p><p><input type='submit' value='Добавить'></p></div>`,
+        '</div>'
+    ].join(''));
+
     var myMap = new ymaps.Map('map', {
         center: [55.76, 37.64],
         zoom: 10
@@ -83,6 +89,8 @@ function init() {
                 clusterCaption: "<strong>Отзыв:</strong>",
                 hintContent: "<strong>Текст  <s>подсказки</s></strong>",
                 iconContent: ''
+            }, {
+                balloonContentLayout: BalloonContentLayout
             })
         points.push(obj)
 
