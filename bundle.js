@@ -19,13 +19,18 @@ function init() {
             subject: subject.value
         }
 
-        UpdateInfo(user)
+        user.formId === '' ? createMark(user) : UpdateInfo(user)
     })
+
+    const createMark = (user) => {
+        let id = UpdateCoords(myMap.balloon._balloon._position)
+        UpdateInfo({...user, formId: id })
+        myMap.balloon.close()
+    }
 
     const UpdateInfo = (user) => {
         for (let item of points) {
-            if (user.formId === item.properties._data.placemarkId.toString()) {
-
+            if (user.formId.toString() === item.properties._data.placemarkId.toString()) {
                 let oldHeader = item.properties._data.balloonContentHeader,
                     newHeader = `<p><strong>${user.login}:</strong> ${user.place}</p><p>${user.subject}</p>` + oldHeader
                 item.properties._data.balloonContentHeader = item.properties._data.clusterCaption = newHeader
@@ -34,7 +39,6 @@ function init() {
                     item.properties._data.iconContent++;
                     UpdateCoords(item.geometry._coordinates)
                 } else item.properties._data.iconContent = 1
-
                 item.balloon.close()
             }
         }
@@ -52,6 +56,12 @@ function init() {
         '</div>'
     ].join(''));
 
+    let balloonContentLayoutForMap = ymaps.templateLayoutFactory.createClass([
+        '<div class=list>',
+        `<div><strong>Отзыв:</strong><form id=''><p><input required placeholder='Введите ваше имя' name='login'></p><p><input name='place' required placeholder='Укажите место'></p><p><textarea name='subject' required placeholder='Оставьте отзыв'></textarea></p><p><input type='submit' value='Добавить'></p></div>`,
+        '</div>'
+    ].join(''));
+
     var myMap = new ymaps.Map('map', {
         center: [55.76, 37.64],
         zoom: 10
@@ -61,22 +71,18 @@ function init() {
     clusterer = new ymaps.Clusterer({
         clusterDisableClickZoom: true,
         groupByCoordinates: true,
-        // clusterBalloonLeftColumnWidth: 0
         clusterBalloonContentLayout: customBalloonContentLayout
     })
 
     myMap.events.add('click', function(e) {
-        var coords = e.get('coords');
-        UpdateCoords(coords)
-    })
+        tempCord = e.get('coords')
 
-    const deleteAll = (id) => {
-        points.features.forEach(item => {
-            if (item.id !== id && item.properties.iconContent === '') {
-                points.features = points.features.filter(obj => obj === item)
-            }
+        tempBall = myMap.balloon.open(tempCord, {
+
+        }, {
+            contentLayout: balloonContentLayoutForMap
         })
-    }
+    })
 
     const UpdateCoords = (coords) => {
         const id = Date.now(),
@@ -94,28 +100,18 @@ function init() {
         points.push(obj)
 
         updateMap(obj)
+
+        return id
     }
 
     const updateMap = (obj) => {
         for (let item of points) {
             if (obj === item) {
                 clusterer.add(obj)
-                myMap.geoObjects.add(clusterer)
             }
         }
         obj.balloon.open()
     }
-
-    clusterer.events.add('balloonclose', function(event) {
-        const id = event.get('target').properties._data.placemarkId,
-            obj = points.filter(item => item.properties._data.placemarkId === id)
-
-        if (obj[0].properties._data.iconContent !== '')
-            return
-        points = points.filter(item => item.properties._data.placemarkId !== id)
-        clusterer.remove(obj)
-
-    })
 
     myMap.geoObjects.add(clusterer)
 
