@@ -8,6 +8,10 @@ function init() {
 
     ]
 
+    let pointsToStore = [
+
+    ]
+
     document.addEventListener('submit', e => {
         e.preventDefault()
 
@@ -35,13 +39,38 @@ function init() {
                     newHeader = `<p><strong>${user.login}:</strong> ${user.place}</p><p>${user.subject}</p>` + oldHeader
                 item.properties._data.balloonContentHeader = item.properties._data.clusterCaption = newHeader
 
+                setLocalStore(user, item)
+
                 if (item.properties._data.iconContent >= 1) {
-                    item.properties._data.iconContent++;
+                    item.properties._data.iconContent = parseInt(item.properties._data.iconContent) + 1;
                     UpdateCoords(item.geometry._coordinates)
                 } else item.properties._data.iconContent = 1
                 item.balloon.close()
             }
         }
+    }
+
+    const setLocalStore = (user, item) => {
+        let res = pointsToStore.find(point => point.placemarkId.toString() === item.properties._data.placemarkId.toString()),
+            obj = {
+                placemarkId: user.formId,
+                balloonContentBody: item.properties._data.balloonContentBody,
+                balloonContentFooter: item.properties._data.balloonContentFooter,
+                balloonContentHeader: item.properties._data.balloonContentHeader,
+                clusterCaption: item.properties._data.clusterCaption,
+                hintContent: item.properties._data.hintContent,
+                iconContent: parseInt(item.properties._data.iconContent) + 1,
+                coords: item.geometry._coordinates
+            }
+
+        if (res) {
+            let index = pointsToStore.indexOf(res)
+            pointsToStore.splice(index, 1, obj)
+        } else {
+            pointsToStore.push(obj)
+        }
+
+        localStorage.setItem('points', JSON.stringify(pointsToStore))
     }
 
     var customBalloonContentLayout = ymaps.templateLayoutFactory.createClass([
@@ -93,7 +122,7 @@ function init() {
                 balloonContentHeader: '<strong>Отзыв:</strong>',
                 clusterCaption: "<strong>Отзыв:</strong>",
                 hintContent: "<strong>Текст  <s>подсказки</s></strong>",
-                iconContent: ''
+                iconContent: 0
             }, {
                 balloonContentLayout: BalloonContentLayout
             })
@@ -102,6 +131,32 @@ function init() {
         updateMap(obj)
 
         return id
+    }
+
+    const loadMap = () => {
+        let items = JSON.parse(localStorage.getItem('points'))
+
+        if (!items)
+            return
+
+        items.forEach(item => {
+            for (let i = 0; i < item.iconContent; i++) {
+                let obj = new ymaps.Placemark(item.coords, {
+                    placemarkId: item.placemarkId,
+                    balloonContentBody: item.balloonContentBody,
+                    balloonContentFooter: item.balloonContentFooter,
+                    balloonContentHeader: item.balloonContentHeader,
+                    clusterCaption: item.clusterCaption,
+                    hintContent: item.hintContent,
+                    iconContent: item.iconContent
+                }, {
+                    balloonContentLayout: BalloonContentLayout
+                })
+                points.push(obj)
+                clusterer.add(obj)
+            }
+            pointsToStore.push(item)
+        })
     }
 
     const updateMap = (obj) => {
@@ -114,5 +169,7 @@ function init() {
     }
 
     myMap.geoObjects.add(clusterer)
+
+    loadMap()
 
 }
