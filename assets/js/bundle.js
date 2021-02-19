@@ -10,7 +10,9 @@ const Init = () => {
         auth: 'AUTH',
         mess: 'MESS',
         disc: 'DISC',
-        err: 'ERR'
+        err: 'ERR',
+        upd: 'UPD',
+        atc: 'ATC'
     }
     let user = {
 
@@ -45,7 +47,7 @@ const Init = () => {
         const [login] = event.target.elements
 
         user.login = login.value
-        user.img = "assets/img/avatar.png"
+        user.img = "assets/img/avatar.jpg"
 
         socket.addEventListener('message', event => filterMessage(JSON.parse(event.data)))
 
@@ -73,6 +75,9 @@ const Init = () => {
             case tMess.err:
                 checkErr(data)
                 break
+            case tMess.atc:
+                updateData(data)
+                break
         }
     }
 
@@ -80,7 +85,48 @@ const Init = () => {
         let result = Handlebars.compile(userTable.textContent)
         document.getElementById('userTable').innerHTML = result(users)
 
+        let img = document.getElementById(`dropped`)
+
+        img.addEventListener('drop', e => {
+            e.preventDefault()
+            let file = e.dataTransfer.files[0],
+                reader = new FileReader()
+
+            reader.onload = function(e) {
+                socket.send(JSON.stringify({
+                    type: tMess.atc,
+                    login: user.login,
+                    filename: `${user.login}.${file.name.split('.')[1]}`,
+                    data: e.target.result
+                }))
+            }
+            reader.readAsBinaryString(file)
+        })
+
+        img.addEventListener('dragover', e => {
+            e.preventDefault()
+        })
+
         updatePeople()
+    }
+
+    const updateData = (data) => {
+        let result = Handlebars.compile(chatTable.textContent)
+
+        updateUser(data)
+
+        chat.forEach((item, index) => {
+            users.forEach((val, ind) => {
+                if (val.login === item.login) {
+                    chat.splice(index, 1, {
+                        ...item,
+                        img: val.img
+                    })
+                }
+            })
+        })
+
+        messages.innerHTML = result(chat)
     }
 
     const checkErr = (data) => {
@@ -149,7 +195,7 @@ const Init = () => {
 
     const updateUser = (data) => {
         users = data.userData
-
+        user = users.find(item => item.login === user.login)
         renderUser()
     }
 
