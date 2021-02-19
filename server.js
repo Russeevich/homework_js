@@ -35,7 +35,6 @@ webSocketServer.on('connection', function(ws) {
                 fileSave(mess)
                 break
         }
-        console.log(users)
     });
 
     const fileSave = (data) => {
@@ -44,7 +43,6 @@ webSocketServer.on('connection', function(ws) {
             if (err) {
                 console.log('error')
             } else {
-                console.log(users)
                 let user = users.find(item => item.login === data.login),
                     userIndex = users.indexOf(user)
                 users.splice(userIndex, 1, {

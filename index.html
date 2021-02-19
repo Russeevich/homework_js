@@ -52,9 +52,8 @@
 
         <script id="messangerLeft" type="text/x-handlebars-template">
             <div class="users__left">
-                {{#each this}}
                 <ul class="users__list">
-
+                    {{#each this}} {{#if my}}
                     <li id="dropped" class="users__item">
                         <img src="{{img}}" alt="" class="users__img">
                         <div class="users__info">
@@ -64,9 +63,18 @@
                             {{/if}}
                         </div>
                     </li>
-
+                    {{else}}
+                    <li class="users__item">
+                        <img src="{{img}}" alt="" class="users__img">
+                        <div class="users__info">
+                            <h1 class="users__name">{{login}}</h1>
+                            {{#if lastMess}}
+                            <div class="users__lastmess">{{lastMess}}</div>
+                            {{/if}}
+                        </div>
+                    </li>
+                    {{/if}} {{/each}}
                 </ul>
-                {{/each}}
             </div>
         </script>
 

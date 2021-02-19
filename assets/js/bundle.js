@@ -82,6 +82,16 @@ const Init = () => {
     }
 
     const renderUser = () => {
+        const drop = users.find(item => item.login === user.login),
+            dropIndex = users.indexOf(drop)
+
+        users.splice(dropIndex, 1, {
+            ...drop,
+            my: true
+        })
+
+
+
         let result = Handlebars.compile(userTable.textContent)
         document.getElementById('userTable').innerHTML = result(users)
 
