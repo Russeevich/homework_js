@@ -9,13 +9,25 @@ const WebSocketServer = new require('ws'),
         atc: 'ATC'
     }
 
-var clients = {};
-let users = [
+let clients = {},
+    users = [
 
-]
-let currentId = 1;
+    ],
+    chat = [
+
+    ],
+    currentId = 1;
 
 const webSocketServer = new WebSocketServer.Server({ port: 8080 });
+
+const loadChat = () => {
+    chats = JSON.parse(fs.readFileSync('./server/chat_history/chat.json'))
+    chats.forEach(item => {
+        chat.push({...item })
+    })
+}
+
+loadChat()
 
 webSocketServer.on('connection', function(ws) {
     const id = currentId++;
@@ -88,6 +100,9 @@ webSocketServer.on('connection', function(ws) {
     const updateUser = (data) => {
         let img = getUserImg(data.userData)
         users.push({ id, ...data.userData, img })
+
+        sendChat()
+
         for (const key in clients) {
             clients[key].send(JSON.stringify({
                 type: tMess.auth,
@@ -96,14 +111,54 @@ webSocketServer.on('connection', function(ws) {
         }
     }
 
+    const getDate = (date) => {
+        const minutes = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes(),
+            hours = date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
+
+        return `${hours}:${minutes}`
+    }
+
     const addMessage = (data) => {
+        const date = getDate(new Date())
+        chat.push({
+            id,
+            message: data.message,
+            user: {
+                ...data.user,
+                img: data.user.login
+            },
+            date
+        })
+
+        console.log(chat)
+
+        fs.writeFileSync('./server/chat_history/chat.json', JSON.stringify(chat))
+
         for (const key in clients) {
             clients[key].send(JSON.stringify({
                 type: tMess.mess,
                 message: data.message,
-                user: data.user
+                user: {
+                    ...data.user,
+                    img: getUserImg(data.user)
+                },
+                date
             }));
         }
+    }
+
+    const sendChat = () => {
+        chat.forEach(item => {
+            clients[id].send(JSON.stringify({
+                type: tMess.mess,
+                message: item.message,
+                user: {
+                    ...item.user,
+                    img: getUserImg(item.user)
+                },
+                date: item.date
+            }))
+        })
     }
 
     ws.on('close', function() {

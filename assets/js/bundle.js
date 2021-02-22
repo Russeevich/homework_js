@@ -162,17 +162,12 @@ const Init = () => {
         document.getElementById('people').textContent = `${count} ${declOfNum(count)}`
     }
 
-    const getDate = (date) => {
-        const minutes = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes(),
-            hours = date.getHours() > 9 ? date.getHours() : '0' + date.getHours()
-
-        return `${hours}:${minutes}`
-    }
-
     const updateMessage = (data) => {
         const login = data.user.login,
             message = data.message,
-            date = getDate(new Date())
+            date = data.date
+
+        console.log(date)
 
         let result = Handlebars.compile(chatTable.textContent),
             lastMess = chat[chat.length - 1],
@@ -203,7 +198,36 @@ const Init = () => {
         messages.innerHTML = result(chat)
     }
 
+    const findUsers = (data) => {
+        let finds = null
+        users.forEach(item => {
+            let findUser = false
+            data.userData.forEach(point => {
+                if (item.login === point.login)
+                    findUser = true
+            })
+            if (!findUser)
+                finds = item
+        })
+
+        return finds
+    }
+
     const updateUser = (data) => {
+        if (data.type === tMess.auth || data.type === tMess.disc) {
+            let result = Handlebars.compile(chatTable.textContent),
+                findUser = null
+
+            if (data.type === tMess.disc)
+                findUser = findUsers(data)
+
+            chat.push({
+                message: data.type === tMess.disc ? `${findUser.login} вышел(а) из чата` : `${data.userData[data.userData.length - 1].login} зашел(а) в чат`,
+                type: 'alien',
+            })
+            messages.innerHTML = result(chat)
+        }
+
         users = data.userData
         user = users.find(item => item.login === user.login)
         renderUser()
