@@ -223,7 +223,7 @@ const Init = () => {
 
             chat.push({
                 message: data.type === tMess.disc ? `${findUser.login} вышел(а) из чата` : `${data.userData[data.userData.length - 1].login} зашел(а) в чат`,
-                type: 'alien',
+                type: 'info',
             })
             messages.innerHTML = result(chat)
         }

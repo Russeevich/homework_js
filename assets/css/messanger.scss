@@ -122,6 +122,9 @@
         &--alien {
             align-items: flex-start;
         }
+        &--info {
+            align-items: center;
+        }
     }
     &__item {
         padding: 8px 7.5px 4px 15px;
@@ -150,7 +153,8 @@
                 margin-right: 41px;
             }
         }
-        &--alien {
+        &--alien,
+        &--info {
             position: relative;
             background: #182633;
             margin-left: 8px;
