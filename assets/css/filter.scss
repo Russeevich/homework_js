@@ -1,0 +1,41 @@
+.filter {
+    background: #F0F0F0;
+    &__inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 23px;
+    }
+    &__input {
+        border: 0;
+        border-radius: 40px;
+        padding: 6px 0 6px 13px;
+        width: 48%;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 14px;
+        color: #9F9F9F;
+        &:first-child {
+            padding-left: 28px;
+            width: 100%;
+        }
+        &:focus {
+            color: #000;
+            outline: none;
+        }
+    }
+    &__search {
+        position: relative;
+        width: 48%;
+    }
+    &__img {
+        width: 13px;
+        height: 13px;
+        position: absolute;
+        left: 9px;
+        top: 50%;
+        transform: translate(0, -50%);
+        fill: #A0A0A0;
+    }
+}

@@ -1,0 +1,16 @@
+.header {
+    width: 100%;
+    background: #FE8663;
+    border-radius: 15px 15px 0 0;
+    &__inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 23px;
+    }
+    &__caption {
+        font-weight: 500;
+        color: white;
+    }
+    &__btn {}
+}

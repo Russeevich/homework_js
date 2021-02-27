@@ -4,8 +4,8 @@
 }
 
 html {
-    font-family: Ubuntu;
-    color: white;
+    font-family: Roboto;
+    color: #505050;
 }
 
 * {
@@ -14,5 +14,60 @@ html {
     box-sizing: border-box;
 }
 
-@import "login.scss";
-@import "messanger.scss";
+hr {
+    background: #F0F0F0;
+    height: 1px;
+    border: 0;
+}
+
+li {
+    list-style: none;
+}
+
+::-webkit-scrollbar-button {
+    background-image: url('');
+    background-repeat: no-repeat;
+    width: 5px;
+    height: 0px
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 5px;
+    border-radius: 10px;
+    background-color: #C4C4C4;
+    height: 80px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #c4c4c4b9;
+}
+
+ ::-webkit-resizer {
+    background-image: url('');
+    background-repeat: no-repeat;
+    width: 3px;
+    height: 0px
+}
+
+ ::-webkit-scrollbar {
+    width: 3px;
+}
+
+.btn {
+    font-family: Fira sans;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+}
+
+@import "app.scss";
+@import "header.scss";
+@import "filter.scss";
+@import "friends.scss";
+@import "footer.scss";

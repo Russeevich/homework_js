@@ -1,110 +1,110 @@
 <html>
 
 <head>
-    <title>VP-2</title>
+    <title>VP-3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="https://vk.com/js/api/openapi.js?168" type="text/javascript"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
     <div class="wrapper">
 
-        <section id="login" class="login">
+        <section class="app">
 
-            <form id="form" class="login__inner">
-                <svg class="login__picture">
-                    <use xlink:href="assets/img/svg/sprite.svg#message"></use>
-                </svg>
-                <h4 class="login__title">Авторизация</h4>
-                <p class="login__subtitle">Введите пожалуйста свой ник для дальнейшей авторизации</p>
-                <input class="login__name" name="login" type="text" placeholder="Введите свой ник">
-                <button class="login__submit">Войти</button>
-            </form>
+            <div class="app__inner">
 
-        </section>
+                <header class="header">
 
-        <section id="mess" class="messanger">
+                    <div class="header__inner">
 
-            <div id="userTable" class="users">
+                        <div class="header__caption">Выберите друзей</div>
+                        <button class="header__btn btn">&times;</button>
 
-            </div>
+                    </div>
 
-            <div class="chat">
-                <div class="chat__info">
-                    <h4 class="chat__title">Чат</h4>
-                    <div id="people" class="chat__people"></div>
-                </div>
-                <div id="chatMessage" class="chat__messages">
+                </header>
 
-                </div>
-                <form id="chatForm" class="chat__inputfield">
-                    <input class="chat__message" name="message" type="text" placeholder="Введите сообщение...">
-                    <button class="chat__submit">Отправить</button>
-                </form>
-            </div>
+                <section class="filter">
 
-        </section>
+                    <div class="filter__inner">
 
+                        <span class="filter__search">
+                            <input placeholder="Начните вводить имя друга" type="text" id="firstFilter" class="filter__input">
+                            <svg class="filter__img">
+                                <use xlink:href="./assets/img/svg/sprite.svg#search"></use>
+                            </svg>
+                        </span>
+                        <input placeholder="Название" type="text" id="secondFilter" class="filter__input">
 
-        <script id="messangerLeft" type="text/x-handlebars-template">
-            <div class="users__left">
-                <ul class="users__list">
-                    {{#each this}} {{#if my}}
-                    <li id="dropped" class="users__item">
-                        <img src="{{img}}" alt="" class="users__img">
-                        <div class="users__info">
-                            <h1 class="users__name">{{login}}</h1>
-                            {{#if lastMess}}
-                            <div class="users__lastmess">{{lastMess}}</div>
-                            {{/if}}
+                    </div>
+
+                </section>
+
+                <section class="friends">
+
+                    <div class="friends__inner">
+
+                        <div class="friends__first">
+
+                            <span class="friends__caption">
+                                Ваши друзья
+                            </span>
+                            <hr>
+
+                            <ul id="friendsFirst" class="friends__list">
+
+                            </ul>
+
                         </div>
+
+                        <div class="friends__second">
+
+                            <span class="friends__caption">
+                                Друзья в списке
+                            </span>
+                            <hr>
+
+                            <ul id="friendsSecond" class="friends__list">
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <script id="friendsTemp" type="text/x-handlebars-template">
+                    {{#each this}} {{#if err}}
+                    <li class="friends__item">
+                        <span class="friends__name">{{err}}</span>
                     </li>
                     {{else}}
-                    <li class="users__item">
-                        <img src="{{img}}" alt="" class="users__img">
-                        <div class="users__info">
-                            <h1 class="users__name">{{login}}</h1>
-                            {{#if lastMess}}
-                            <div class="users__lastmess">{{lastMess}}</div>
-                            {{/if}}
-                        </div>
+                    <li id="{{id}}" draggable="true" class="friends__item">
+
+                        <img class="friends__img" src="{{photo_100}}" alt="">
+                        <span class="friends__name">{{first_name}} {{last_name}}</span> {{#if close}}
+                        <button class="friends__close btn">&times;</button> {{else}}
+                        <button class="friends__move btn">></button> {{/if}}
+
                     </li>
                     {{/if}} {{/each}}
-                </ul>
-            </div>
-        </script>
+                </script>
 
-        <script id="messangerRight" type="text/x-handlebars-template">
-            <div class="chat__message">
-                {{#each this}}
-                <div class="chat__list chat__list--{{type}}">
-                    {{#if first}}
-                    <h4 class="chat__name chat__name--{{type}}">{{login}}</h4>
-                    {{/if}}
-                    <div class="chat__object chat__object--{{type}}">
-                        {{#if first}}
-                        <div class="chat__item chat__item--{{type}} chat__first">
-                            <div class="chat__mess">{{message}}</div>
-                            <div class="chat__date">{{date}}</div>
-                        </div>
-                        <img src="{{img}}" alt="" class="chat__img"> {{else}}
-                        <div class="chat__item chat__item--{{type}}">
-                            <div class="chat__mess">{{message}}</div>
-                            <div class="chat__date">{{date}}</div>
-                        </div>
-                        {{/if}}
-                    </div>
-                </div>
-                {{/each}}
+
+
+                <footer class="footer"></footer>
+
             </div>
-        </script>
+
+        </section>
 
     </div>
-    <script src="assets/js/bundle.js"></script>
+    <script type="module" src="assets/js/bundle.js"></script>
 </body>
 
 </html>

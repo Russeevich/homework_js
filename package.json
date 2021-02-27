@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "browserify": "^17.0.0",
     "ws": "^7.4.3"
   },
   "devDependencies": {},
