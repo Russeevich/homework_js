@@ -22,6 +22,7 @@
         height: 45px;
         border-radius: 50%;
         margin-right: 7px;
+        pointer-events: none;
     }
     &__item {
         position: relative;

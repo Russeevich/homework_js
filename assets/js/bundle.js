@@ -6,27 +6,44 @@ const setEvent = () => {
     const mvBtn = document.querySelectorAll('.friends__move'),
         firstFilter = document.getElementById('firstFilter'),
         clBtn = document.querySelectorAll('.friends__close'),
-        secondFilter = document.getElementById('secondFilter')
+        secondFilter = document.getElementById('secondFilter'),
+        items = document.querySelectorAll('.friends__item')
     mvBtn.forEach(item => {
         item.addEventListener('click', (e) => {
             const id = e.target.parentNode.id
-            controller.setFavorite(id, firstFilter).then(list => {
-                controller.setList('friendsSecond', 'friends', list.second)
-                controller.setList('friendsFirst', 'friends', list.first).then(() => {
-                    setEvent()
-                })
-            })
+            setFav(id, firstFilter, secondFilter)
         })
     })
 
     clBtn.forEach(item => {
         item.addEventListener('click', (e) => {
             const id = e.target.parentNode.id
-            controller.unsetFavorite(id, secondFilter).then(list => {
-                controller.setList('friendsSecond', 'friends', list.first)
-                controller.setList('friendsFirst', 'friends', list.second).then(() => {
-                    setEvent()
-                })
+            unsetFav(id, firstFilter, secondFilter)
+        })
+    })
+
+    items.forEach(item => {
+        item.addEventListener('dragstart', onDragStart)
+    })
+}
+
+const setFav = (id, first, second) => {
+    controller.setFavorite(id).then(() => {
+        controller.render(first, second).then(items => {
+            controller.setList('friendsFirst', 'friends', items.first)
+            controller.setList('friendsSecond', 'friends', items.second).then(() => {
+                setEvent()
+            })
+        })
+    })
+}
+
+const unsetFav = (id, first, second) => {
+    controller.unsetFavorite(id).then(() => {
+        controller.render(first, second).then(items => {
+            controller.setList('friendsFirst', 'friends', items.first)
+            controller.setList('friendsSecond', 'friends', items.second).then(() => {
+                setEvent()
             })
         })
     })
@@ -45,6 +62,10 @@ const filter = (e, input, output, fav) => {
         })
 }
 
+const onDragStart = e => {
+    e.dataTransfer.setData('text/plain', e.target.id)
+}
+
 
 const init = () => {
     model.login('7774039', {}).then(() => {
@@ -53,9 +74,11 @@ const init = () => {
             controller.setList('friendsFirst', 'friends', friends).then(() => {
                 const firstFilter = document.getElementById('firstFilter'),
                     secondFilter = document.getElementById('secondFilter'),
+                    first = document.getElementById('friendsFirst'),
+                    second = document.getElementById('friendsSecond'),
+                    items = document.querySelectorAll('.friends__item')
 
-
-                    setEvent()
+                setEvent()
 
                 firstFilter.addEventListener('input', e => {
                     filter(e, 'friendsFirst', 'friends', false)
@@ -63,6 +86,36 @@ const init = () => {
 
                 secondFilter.addEventListener('input', e => {
                     filter(e, 'friendsSecond', 'friends', true)
+                })
+
+                first.addEventListener('drop', e => {
+                    e.preventDefault()
+
+                    const id = e.dataTransfer.getData('text')
+                    unsetFav(id, firstFilter, secondFilter)
+
+                    e.dataTransfer.clearData()
+                })
+
+                second.addEventListener('drop', e => {
+                    e.preventDefault()
+
+                    const id = e.dataTransfer.getData('text')
+                    setFav(id, firstFilter, secondFilter)
+
+                    e.dataTransfer.clearData()
+                })
+
+                first.addEventListener('dragover', e => {
+                    e.preventDefault()
+                })
+
+                second.addEventListener('dragover', e => {
+                    e.preventDefault()
+                })
+
+                items.forEach(item => {
+                    item.addEventListener('dragstart', onDragStart)
                 })
             })
         })

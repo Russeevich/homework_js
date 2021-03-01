@@ -19,55 +19,64 @@ export default {
         this.peoples = [...friends]
     },
     filterFields(friendField, filter) {
-        return friendField.toLowerCase().includes(filter.toLowerCase())
+        if (friendField !== undefined)
+            return friendField.toLowerCase().includes(filter.toLowerCase())
     },
     setFilter(filter, fav = false) {
-        return new Promise((res, rej) => {
+        return new Promise(res => {
             const filters = []
 
             if (!fav) {
                 for (let item of this.peoples) {
-                    if (this.filterFields(item.first_name, filter) || this.filterFields(item.last_name, filter)) {
+                    if (item && this.filterFields(item.first_name, filter) || this.filterFields(item.last_name, filter)) {
                         filters.push(item)
                     }
                 }
             } else {
-                for (let item of this.favorite) {
-                    if (this.filterFields(item.first_name, filter) || this.filterFields(item.last_name, filter)) {
-                        filters.push(item)
+                if (this.favorite.length > 0) {
+                    for (let item of this.favorite) {
+                        if (this.filterFields(item.first_name, filter) || this.filterFields(item.last_name, filter)) {
+                            filters.push(item)
+                        }
                     }
                 }
             }
 
             if (filters.length < 1)
-                rej('Никто не соответствует фильтру')
+                res([{ err: 'Никто не соответсвует фильтру' }])
             else res(filters)
         })
     },
-    setFavorite(id, filter) {
+    setFavorite(id) {
         return new Promise(res => {
-            const index = this.peoples.findIndex(item => item.id == id),
-                el = this.peoples.find(item => item.id == id)
+            const el = this.peoples.find(item => item.id == id),
+                inFav = this.favorite.find(item => item.id == id)
 
             this.favorite.push({...el, close: true })
-            this.peoples.splice(index, 1)
-            this.setFilter(filter.value).then(e => {
-                res({ first: e, second: this.favorite })
-            })
+            this.peoples = this.peoples.filter(item => item.id != id)
+
+            res('complite')
+
         })
     },
-    unsetFavorite(id, filter) {
+    unsetFavorite(id) {
         return new Promise(res => {
-            const index = this.favorite.findIndex(item => item.id == id),
-                el = this.favorite.find(item => item.id == id)
+            const el = this.favorite.find(item => item.id == id),
+                inPeo = this.peoples.find(item => item.id == id)
 
             this.peoples.push({...el, close: false })
-            this.favorite.splice(index, 1)
-            if (filter.value)
-                this.setFilter(filter.value, true).then(e => {
-                    res({ first: e, second: this.peoples })
-                }).catch(err => res({ first: [{ err }], second: this.peoples }))
-            else res({ first: this.favorite, second: this.peoples })
+            this.favorite = this.favorite.filter(item => item.id != id)
+
+            res('complite')
+        })
+    },
+    render(first, second) {
+        return new Promise(res => {
+            this.setFilter(first.value).then(item => {
+                this.setFilter(second.value, true).then(items => {
+                    res({ first: item, second: items })
+                })
+            })
         })
     }
 }
