@@ -14,22 +14,15 @@ export default {
         }
     },
     checkFav() {
-        return new Promise((res, rej) => {
-            const fav = JSON.parse(localStorage.getItem('favorite'))
-            if (!fav)
-                rej('Нет значений')
-            else {
-                this.favorite = [...fav]
-                res(JSON.parse(localStorage.getItem('favorite')))
-            }
-        })
+        const fav = JSON.parse(localStorage.getItem('favorite'))
+        if (fav) {
+            this.favorite = [...fav]
+            return JSON.parse(localStorage.getItem('favorite'))
+        }
     },
     setList(input, output, items) {
-        return new Promise(res => {
-            const results = document.getElementById(input)
-            results.innerHTML = view.render(output, items)
-            res('complite')
-        })
+        const results = document.getElementById(input)
+        results.innerHTML = view.render(output, items)
     },
     setFriends(friends) {
         this.peoples = [...friends]
