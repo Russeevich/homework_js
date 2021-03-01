@@ -78,6 +78,10 @@ const init = () => {
                     second = document.getElementById('friendsSecond'),
                     items = document.querySelectorAll('.friends__item')
 
+                controller.checkFav().then(item => {
+                    controller.setList('friendsSecond', 'friends', item)
+                }).catch(e => {}).then(() => setEvent())
+
                 setEvent()
 
                 firstFilter.addEventListener('input', e => {

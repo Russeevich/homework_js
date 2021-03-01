@@ -5,8 +5,24 @@ export default {
     peoples: [],
     favorite: [],
     async getList() {
-        const friends = await model.getFriends({ fields: "photo_100" })
-        return friends.items
+        const friend = JSON.parse(localStorage.getItem('peoples'))
+        if (!friend) {
+            const friends = await model.getFriends({ fields: "photo_100" })
+            return friends.items
+        } else {
+            return friend
+        }
+    },
+    checkFav() {
+        return new Promise((res, rej) => {
+            const fav = JSON.parse(localStorage.getItem('favorite'))
+            if (!fav)
+                rej('Нет значений')
+            else {
+                this.favorite = [...fav]
+                res(JSON.parse(localStorage.getItem('favorite')))
+            }
+        })
     },
     setList(input, output, items) {
         return new Promise(res => {
@@ -49,11 +65,16 @@ export default {
     },
     setFavorite(id) {
         return new Promise(res => {
-            const el = this.peoples.find(item => item.id == id),
-                inFav = this.favorite.find(item => item.id == id)
+            const el = this.peoples.find(item => item.id == id)
+
+            if (!el)
+                return
 
             this.favorite.push({...el, close: true })
             this.peoples = this.peoples.filter(item => item.id != id)
+
+            localStorage.setItem('peoples', JSON.stringify(this.peoples))
+            localStorage.setItem('favorite', JSON.stringify(this.favorite))
 
             res('complite')
 
@@ -61,11 +82,16 @@ export default {
     },
     unsetFavorite(id) {
         return new Promise(res => {
-            const el = this.favorite.find(item => item.id == id),
-                inPeo = this.peoples.find(item => item.id == id)
+            const el = this.favorite.find(item => item.id == id)
+
+            if (!el)
+                return
 
             this.peoples.push({...el, close: false })
             this.favorite = this.favorite.filter(item => item.id != id)
+
+            localStorage.setItem('peoples', JSON.stringify(this.peoples))
+            localStorage.setItem('favorite', JSON.stringify(this.favorite))
 
             res('complite')
         })
