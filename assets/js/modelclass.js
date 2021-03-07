@@ -1,8 +1,13 @@
-export default {
-    login(id, params) {
+export class Model {
+    constructor(id, version = '5.130') {
+        this.id = id
+        this.version = version
+    }
+
+    login(params) {
         return new Promise((res, rej) => {
             VK.init({
-                apiId: id
+                apiId: this.id
             })
 
             VK.Auth.login(resp => {
@@ -13,9 +18,10 @@ export default {
                 }
             }, params)
         })
-    },
+    }
+
     callApi(method, params) {
-        params.v = params.v || '5.130'
+        params.v = this.version
 
         return new Promise((res, rej) => {
             VK.api(method, params, resp => {
@@ -26,10 +32,12 @@ export default {
                 }
             })
         })
-    },
+    }
+
     getUser(params = {}) {
         return this.callApi('users.get', params)
-    },
+    }
+
     getFriends(params = {}) {
         return this.callApi('friends.get', params)
     }
